@@ -24,3 +24,10 @@ artifacts/*.pkl.gz
 artifacts/*.json
 artifacts/*.txt
 !artifacts/.gitkeep
+
+# Extracted documentation files
+redrob_signals_doc.txt
+submission_spec.txt
+README.txt
+job_description.txt
+

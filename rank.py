@@ -206,8 +206,8 @@ def main():
     print(f"Scored {len(scored_candidates)} valid candidates. Excluded {honeypot_count} honeypots.")
 
     # 4. Sort and Rank (Break ties by candidate_id ascending)
-    # Sort descending by score, then ascending by candidate_id
-    scored_candidates.sort(key=lambda x: (-x["score"], x["candidate_id"]))
+    # Sort descending by score (rounded to 4 decimals to match CSV representation), then ascending by candidate_id
+    scored_candidates.sort(key=lambda x: (-round(x["score"], 4), x["candidate_id"]))
 
     # Take top 100
     top_100 = scored_candidates[:100]
