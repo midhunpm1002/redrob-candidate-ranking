@@ -1,0 +1,50 @@
+# Redrob Hackathon — Submission Metadata
+team_name: "Team Antigravity"  # Change this to your registered team name
+
+primary_contact:
+  name: "Participant Name"
+  email: "participant@example.com"   # Used for all organizer communication
+  phone: "+91-9999999999"            # Used for top-50 / top-10 outreach
+
+team_members:
+  - name: "Participant Name"
+    email: "participant@example.com"
+    role: "ML Engineer"
+
+github_repo: "https://github.com/USERNAME/REPO" # Change to your repo URL
+sandbox_link: "https://huggingface.co/spaces/USERNAME/redrob-ranker" # Change to your Streamlit/HF Space URL
+
+reproduce_command: "python rank.py --candidates ./candidates.jsonl --out ./submission.csv"
+
+compute:
+  platform: "Windows PC"
+  cpu_cores: 8
+  ram_gb: 16
+  python_version: "3.13.5"
+  os: "Windows 11"
+  uses_gpu_for_inference: false
+  has_network_during_ranking: false
+  pre_computation_required: true
+  pre_computation_time_minutes: 400
+
+ai_tools_used:
+  - "Gemini"
+  - "Claude"
+
+ai_usage_summary: |
+  Used Gemini for code generation, architectural decisions, and Git-based pair programming workspace orchestration.
+  No candidate data was shared with any hosted LLM APIs.
+
+methodology_summary: |
+  Two-phase architecture: Phase 1 precomputes candidate features, gates honeypots, and generates embeddings locally using all-MiniLM-L6-v2 on CPU.
+  Phase 2 applies a hybrid scoring formula combining title relevance (curated role taxonomy), production ML evidence (shipped/production keyword search in career history),
+  infrastructure skills weighted by duration/proficiency/endorsements, evaluation skills, smooth experience years fit (peaking at 5-9 years), location fit,
+  notice period penalty, and semantic similarity. A behavioral availability multiplier (bounded [0.7, 1.15]) is applied. Honeypots are gated out.
+  Ties are broken by candidate ID ascending.
+
+declarations:
+  read_submission_spec: true
+  code_is_original_work: true
+  no_collusion: true
+  honeypot_check_done: true
+  reproduction_tested: true
