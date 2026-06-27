@@ -1,0 +1,26 @@
+# Dataset and outputs
+candidates.jsonl
+submission.csv
+team_*.csv
+
+# Python environment
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE and tool states
+.gemini/
+.ipynb_checkpoints/
+.vscode/
+.idea/
+
+# Large precomputed artifacts (keep folder structure but ignore content)
+artifacts/*.npy
+artifacts/*.npz
+artifacts/*.pkl
+artifacts/*.pkl.gz
+artifacts/*.json
+artifacts/*.txt
+!artifacts/.gitkeep
