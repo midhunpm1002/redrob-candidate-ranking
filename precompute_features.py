@@ -57,14 +57,7 @@ def check_honeypot(cand):
         if s.get("proficiency") == "expert" and s.get("duration_months", 0) <= 0:
             return True, f"Expert proficiency claimed for skill '{s.get('name')}' with 0 duration"
 
-    # 3. Expected salary min > max
-    salary_range = signals.get("expected_salary_range_inr_lpa", {})
-    sal_min = salary_range.get("min", 0)
-    sal_max = salary_range.get("max", 0)
-    if sal_min > sal_max:
-        return True, f"Expected salary min ({sal_min}) is greater than max ({sal_max})"
-
-    # 4. Overlapping date ranges
+    # 3. Overlapping date ranges
     # Build list of intervals (start, end)
     intervals = []
     current_jobs = 0
@@ -102,11 +95,8 @@ def check_honeypot(cand):
                 if overlap_days > 90 and c1 != c2:
                     return True, f"Overlapping jobs at '{c1}' and '{c2}' for {overlap_days} days"
 
-    # 5. Timeline inversion
+    # 4. Timeline inversion
     signup = parse_date(signals.get("signup_date"))
-    last_act = parse_date(signals.get("last_active_date"))
-    if signup and last_act and signup > last_act:
-        return True, f"Signup date ({signals.get('signup_date')}) is after last active date ({signals.get('last_active_date')})"
     if signup and signup > CURRENT_DATE:
         return True, f"Signup date ({signals.get('signup_date')}) is in the future"
 

@@ -74,13 +74,7 @@ def check_honeypot(cand_feat):
         if s.get("proficiency") == "expert" and s.get("duration_months", 0) <= 0:
             return True, f"Expert proficiency claimed for skill '{s.get('name')}' with 0 duration"
 
-    # 3. Expected salary min > max
-    sal_min = cand_feat.get("expected_salary_min", 0.0)
-    sal_max = cand_feat.get("expected_salary_max", 0.0)
-    if sal_min > sal_max:
-        return True, f"Expected salary min ({sal_min}) is greater than max ({sal_max})"
-
-    # 4. Overlapping date ranges
+    # 3. Overlapping date ranges
     # Build list of intervals (start, end)
     intervals = []
     current_jobs = 0
