@@ -1,9 +1,6 @@
 import streamlit as st
 import traceback
 
-# Very first line to verify Streamlit is running the script
-st.write("App started")
-
 try:
     import json
     import pandas as pd
