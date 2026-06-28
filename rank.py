@@ -69,6 +69,9 @@ def generate_reasoning(feat, rank, sim_score):
     resp_rate = feat.get("recruiter_response_rate", 0.0)
     loc = feat.get("location", "")
     
+    # Avoid duplicate 'Senior Senior' titles
+    senior_title = title if title.lower().startswith("senior") else f"Senior {title}"
+    
     # 1. Identify candidate's top matched target skills
     cand_skills = feat.get("skills", [])
     matched_skills = []
@@ -102,7 +105,7 @@ def generate_reasoning(feat, rank, sim_score):
     if rank <= 15:
         # Strong, enthusiastic tone, highlighting production ML & leadership fit
         opts = [
-            f"Senior {title} with {exp} years of experience, demonstrating a strong history of shipping search systems at {company}; excellent match for founding team needs.",
+            f"{senior_title} with {exp} years of experience, demonstrating a strong history of shipping search systems at {company}; excellent match for founding team needs.",
             f"Exceptional ML engineer profile with {exp} years of background, showing production-level experience in {skills_str} and a high recruiter response rate of {resp_rate:.0%}.",
             f"Highly relevant {title} with {exp} years of experience, possessing expert proficiency in {skills_str}; has built end-to-end retrieval pipelines at {company}.",
             f"Strong candidate with {exp} years of experience, active on platform ({resp_rate:.0%} response rate), who has successfully deployed embeddings-based search models in production."
