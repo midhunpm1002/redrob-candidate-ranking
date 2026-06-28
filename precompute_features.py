@@ -76,6 +76,13 @@ def check_honeypot(cand):
         if start and end:
             if start > end:
                 return True, f"Job {idx} has start date after end date"
+            
+            # Check stated vs actual duration mismatch
+            actual_months = (end.year - start.year) * 12 + (end.month - start.month)
+            stated = job.get("duration_months", 0)
+            if abs(actual_months - stated) > 6:
+                return True, f"Job {idx} duration mismatch: stated {stated} months but dates imply {actual_months} months"
+                
             intervals.append((start, end, job.get("company", "")))
 
     if current_jobs > 1:
