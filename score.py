@@ -458,6 +458,11 @@ def score_candidate(cand_feat, semantic_similarity=0.5):
         
     # 2. Rule sub-scores
     title = compute_title_relevance(cand_feat)
+    
+    # If the title relevance is completely zero, this candidate has an unrelated background
+    if title == 0.0:
+        return 0.0, 0.0, 1.0, 0.0, False, ""
+        
     prod = compute_production_ml_evidence(cand_feat)
     infra = compute_infra_score(cand_feat)
     eval_score = compute_eval_score(cand_feat)

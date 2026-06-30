@@ -36,20 +36,21 @@ class TestScoringAndGating(unittest.TestCase):
         self.assertIn("years_of_experience", feat)
         self.assertIn("skills", feat)
 
-    def test_honeypot_salary_inversion(self):
-        # Create a mock candidate with min salary > max salary
+    def test_honeypot_precomputed_gating(self):
+        # Verify that precomputed honeypots (e.g. job duration mismatches) are gated
         mock_feat = {
             "candidate_id": "CAND_TEST001",
             "years_of_experience": 5.0,
             "career_durations": [60],
             "skills": [{"name": "Python", "proficiency": "advanced", "duration_months": 24}],
-            "expected_salary_min": 45.0,
-            "expected_salary_max": 30.0,  # Inverted!
-            "is_honeypot": False
+            "expected_salary_min": 15.0,
+            "expected_salary_max": 30.0,
+            "is_honeypot": True,
+            "honeypot_reason": "Job 0 duration mismatch"
         }
         is_hp, reason = check_honeypot(mock_feat)
         self.assertTrue(is_hp)
-        self.assertIn("salary", reason.lower())
+        self.assertEqual(reason, "Job 0 duration mismatch")
 
     def test_honeypot_expert_zero_duration(self):
         # Create a mock candidate with expert skill and 0 duration

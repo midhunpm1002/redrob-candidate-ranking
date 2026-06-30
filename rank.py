@@ -72,6 +72,19 @@ def generate_reasoning(feat, rank, sim_score):
     # Avoid duplicate 'Senior Senior' titles
     senior_title = title if title.lower().startswith("senior") else f"Senior {title}"
     
+    # Check if title is completely unrelated
+    title_lower = title.lower()
+    unrelated_keywords = [
+        "marketing", "hr", "recruiter", "accountant", "mechanical", "civil",
+        "sales", "support", "operations", "graphic", "designer", "brand",
+        "business analyst", "finance", "legal", "product manager", "project manager"
+    ]
+    is_unrelated = any(k in title_lower for k in unrelated_keywords)
+    if is_unrelated:
+        return f"Background as {title} with {exp} years of experience is not aligned with the core requirements for this Senior AI Engineer role."
+        
+    is_ml_title = any(k in title_lower for k in ["ai", "ml", "machine learning", "search", "retrieval", "nlp", "recommendation", "ranking", "deep learning", "applied scientist"])
+    
     # 1. Identify candidate's top matched target skills
     cand_skills = feat.get("skills", [])
     matched_skills = []
@@ -86,7 +99,7 @@ def generate_reasoning(feat, rank, sim_score):
     
     # Extract top 2 skills names
     top_skills = [s.get("name") for s in matched_skills[:2]]
-    skills_str = ", ".join(top_skills) if top_skills else "applied ML techniques"
+    skills_str = ", ".join(top_skills) if top_skills else "software engineering tools"
 
     # 2. Location description
     loc_lower = loc.lower()
@@ -102,11 +115,16 @@ def generate_reasoning(feat, rank, sim_score):
     seed = int(feat["candidate_id"].split("_")[1])
     random.seed(seed) # Deterministic variation per candidate
     
+    ml_desc = "ML engineer" if is_ml_title else f"{title}"
+    roles_desc = "in ML/AI roles" if is_ml_title else "in technical engineering roles"
+    exposure_desc = "good production ML exposure" if is_ml_title else "solid software systems exposure"
+    focus_desc = "founding-team AI engineering" if is_ml_title else "hands-on search/ranking algorithms"
+    
     if rank <= 15:
         # Strong, enthusiastic tone, highlighting production ML & leadership fit
         opts = [
             f"{senior_title} with {exp} years of experience, demonstrating a strong history of shipping search systems at {company}; excellent match for founding team needs.",
-            f"Exceptional ML engineer profile with {exp} years of background, showing production-level experience in {skills_str} and a high recruiter response rate of {resp_rate:.0%}.",
+            f"Exceptional {ml_desc} profile with {exp} years of background, showing production-level experience in {skills_str} and a high recruiter response rate of {resp_rate:.0%}.",
             f"Highly relevant {title} with {exp} years of experience, possessing expert proficiency in {skills_str}; has built end-to-end retrieval pipelines at {company}.",
             f"Strong candidate with {exp} years of experience, active on platform ({resp_rate:.0%} response rate), who has successfully deployed embeddings-based search models in production."
         ]
@@ -115,10 +133,10 @@ def generate_reasoning(feat, rank, sim_score):
     elif rank <= 60:
         # Balanced, positive tone, mentioning minor notice period or location details
         opts = [
-            f"Solid {title} showing {exp} years of experience and deep expertise in {skills_str}; has good production ML exposure, though notice period is {notice} days.",
+            f"Solid {title} showing {exp} years of experience and deep expertise in {skills_str}; has {exposure_desc}, though notice period is {notice} days.",
             f"Possesses {exp} years of experience with strong ranking/retrieval skills like {skills_str}; {loc_phrase} and shows stable tenure history.",
             f"Good fit with {exp} years of experience, showing practical exposure to {skills_str} at {company}; notice period is {notice} days and response rate is {resp_rate:.0%}.",
-            f"{title} with {exp} years in ML/AI roles, demonstrating a solid skill-fit for search databases, though notice period is slightly long at {notice} days."
+            f"{title} with {exp} years {roles_desc}, demonstrating a solid skill-fit for search databases, though notice period is slightly long at {notice} days."
         ]
         reason = random.choice(opts)
         
@@ -128,7 +146,7 @@ def generate_reasoning(feat, rank, sim_score):
             f"Matches key search infrastructure skills like {skills_str} with {exp} years of experience, but has a long notice period of {notice} days.",
             f"Competent {title} with {exp} years of experience; has solid adjacent skills but lacks direct production search/ranking history, and is {loc_phrase}.",
             f"Has {exp} years of experience and matches on {skills_str}, but response rate is lower ({resp_rate:.0%}) and location is {loc}.",
-            f"Offers {exp} years of experience with {skills_str}; a qualified developer, though career history is less focused on founding-team AI engineering and notice is {notice} days."
+            f"Offers {exp} years of experience with {skills_str}; a qualified developer, though career history is less focused on {focus_desc} and notice is {notice} days."
         ]
         reason = random.choice(opts)
 
