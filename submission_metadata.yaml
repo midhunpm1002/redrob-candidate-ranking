@@ -1,50 +1,67 @@
-# Redrob Hackathon — Submission Metadata
-team_name: "Team Antigravity"  # Change this to your registered team name
+# Redrob Intelligent Candidate Discovery & Ranking Challenge
+# Submission Metadata
 
-primary_contact:
-  name: "Participant Name"
-  email: "participant@example.com"   # Used for all organizer communication
-  phone: "+91-9999999999"            # Used for top-50 / top-10 outreach
+participant:
+  name: Midhun PM
+  email: midhunpm1002@gmail.com
+  phone: "+91 9778393611"
+  participant_id: midhunpm1002_1351
+  institution: Pondicherry University, Department of Banking Technology
+  degree: MBA - Financial Technology
 
-team_members:
-  - name: "Participant Name"
-    email: "participant@example.com"
-    role: "ML Engineer"
+submission:
+  github_repo: https://github.com/midhunpm1002/redrob-candidate-ranking
+  sandbox_url: https://redrob-candidate-ranking.streamlit.app/
+  submission_csv: midhunpm1002_1351.csv
 
-github_repo: "https://github.com/USERNAME/REPO" # Change to your repo URL
-sandbox_link: "https://huggingface.co/spaces/USERNAME/redrob-ranker" # Change to your Streamlit/HF Space URL
-
-reproduce_command: "python rank.py --candidates ./candidates.jsonl --out ./submission.csv"
-
-compute:
-  platform: "Windows PC"
-  cpu_cores: 8
+compute_environment:
+  os: Windows 11
+  cpu: 13th Gen Intel(R) Core(TM) i5-13500H
   ram_gb: 16
-  python_version: "3.13.5"
-  os: "Windows 11"
-  uses_gpu_for_inference: false
-  has_network_during_ranking: false
-  pre_computation_required: true
-  pre_computation_time_minutes: 400
+  python_version: "3.14"
+  gpu: none
 
 ai_tools_used:
-  - "Gemini"
-  - "Claude"
+  - tool: Claude (Anthropic)
+    purpose: Architecture design, prompt engineering, code review, bug diagnosis
+  - tool: Antigravity IDE (Google Gemini 3.5 Flash)
+    purpose: Code generation, pipeline implementation, iterative debugging
 
-ai_usage_summary: |
-  Used Gemini for code generation, architectural decisions, and Git-based pair programming workspace orchestration.
-  No candidate data was shared with any hosted LLM APIs.
+methodology_summary: >
+  We built a two-phase hybrid ranking system. Phase 1 precomputes rule-based
+  fit features (title relevance, production ML evidence, retrieval/embeddings
+  infrastructure depth, evaluation framework experience) and local CPU
+  sentence-transformer embeddings (all-MiniLM-L6-v2) for all 100,000
+  candidates and the job description offline with no time limit. Phase 2
+  loads these precomputed artifacts and combines them into a final score:
+  rule-based features (85% weight) plus semantic similarity (15% weight),
+  gated by a strict honeypot consistency check (impossible experience
+  timelines, zero-duration expert skills, contradictory job dates) that
+  excludes flagged candidates entirely. A behavioral availability multiplier
+  based on recruiter response rate, recent activity, and interview completion
+  adjusts the final score within a bounded 0.7-1.15 range. The ranking step
+  runs in under 25 seconds on CPU with no network access. During development
+  we caught and fixed a critical title-relevance bug where non-AI/ML titles
+  scored competitively due to insufficient discrimination — a direct instance
+  of the keyword-stuffing trap the dataset is designed to test for.
 
-methodology_summary: |
-  Two-phase architecture: Phase 1 precomputes candidate features, gates honeypots, and generates embeddings locally using all-MiniLM-L6-v2 on CPU.
-  Phase 2 applies a hybrid scoring formula combining title relevance (curated role taxonomy), production ML evidence (shipped/production keyword search in career history),
-  infrastructure skills weighted by duration/proficiency/endorsements, evaluation skills, smooth experience years fit (peaking at 5-9 years), location fit,
-  notice period penalty, and semantic similarity. A behavioral availability multiplier (bounded [0.7, 1.15]) is applied. Honeypots are gated out.
-  Ties are broken by candidate ID ascending.
+ranking_pipeline:
+  phase_1_precompute:
+    script_1: precompute_features.py
+    script_2: precompute_embeddings.py
+    note: Run once offline, no time limit. Generates artifacts/ directory.
+  phase_2_ranking:
+    script: rank.py
+    command: python rank.py --candidates ./candidates.jsonl --out ./submission.csv
+    wall_clock_time_seconds: 23.33
+    memory_gb: under 16
+    gpu_required: false
+    network_required: false
 
-declarations:
-  read_submission_spec: true
-  code_is_original_work: true
-  no_collusion: true
-  honeypot_check_done: true
-  reproduction_tested: true
+honeypot_summary:
+  total_flagged: 61
+  checks:
+    - Expert proficiency with zero duration_months
+    - Years of experience wildly inconsistent with career history duration
+    - Job start date after end date
+    - Individual job tenure stated vs actual date mismatch over 6 months
