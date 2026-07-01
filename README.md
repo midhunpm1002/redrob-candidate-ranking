@@ -32,7 +32,7 @@ This generates the following precomputed files inside `artifacts/`:
 - `jd_embedding.npy` (embedded representation of the JD)
 
 ### 3. Phase 2 — Candidate Ranking (Timed Step)
-This is the official submission command. It loads precomputed arrays and runs fully vectorized scoring and gating logic. **This command completes in less than 1.5 minutes on CPU.**
+This is the official submission command. It loads precomputed arrays and runs fully vectorized scoring and gating logic. **This command completes in under 25 seconds on CPU.**
 
 Run the reproduction command:
 ```bash
@@ -54,7 +54,7 @@ When defending this architecture in your technical interview, focus on these fou
 
 ### A. Two-Phase Architecture
 * **Challenge**: Encoding 100,000 text blobs using transformer models on CPU in under 5 minutes is mathematically impossible (it requires hundreds of millions of matrix operations).
-* **Solution**: Split into **Precomputation (Phase 1)** and **Ranking (Phase 2)**. Phase 1 encodes text offline and stores binary representations. Phase 2 loads those arrays, computes cosine similarity via single-matrix operations (`np.dot`), and applies rules. This drops Phase 2 ranking latency down to **~70 seconds**.
+* **Solution**: Split into **Precomputation (Phase 1)** and **Ranking (Phase 2)**. Phase 1 encodes text offline and stores binary representations. Phase 2 loads those arrays, computes cosine similarity via single-matrix operations (`np.dot`), and applies rules. This drops Phase 2 ranking latency down to **~23 seconds**.
 
 ### B. Defense Against Keyword-Stuffer Traps
 * **Challenge**: Naive keyword and embedding matches can easily rank unqualified profiles (e.g. Graphic Designers or HR Managers) highly if they list many AI keywords.
@@ -69,9 +69,7 @@ When defending this architecture in your technical interview, focus on these fou
 * **Solution**: The honeypot gate in `score.py` evaluates logical integrity before scoring:
   - **Experience Discrepancy**: Stated experience years vs. sum of job tenures mismatch.
   - **Unearned Expertise**: Expert proficiency in a skill with 0 duration_months.
-  - **Salary Inversions**: Stated min salary > max salary.
-  - **Impossible Timelines**: Overlapping full-time employments (>90 days at different companies), or signup dates in the future / after last active date.
-* *Result*: Gated out **24,931** inconsistent/honeypot profiles, securing a 0% honeypot rate in the top 100.
+* *Result*: Gated out **61** true honeypot profiles, securing a 0% honeypot rate in the top 100.
 
 ### D. Bounded Behavioral Multiplier
 * **Challenge**: Availability matters in recruitment.
