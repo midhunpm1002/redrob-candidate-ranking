@@ -11,7 +11,7 @@ participant:
 
 submission:
   github_repo: https://github.com/midhunpm1002/redrob-candidate-ranking
-  sandbox_url: TBD - deploying to Streamlit Cloud
+  sandbox_url: https://redrob-candidate-ranking.streamlit.app/
   submission_csv: midhunpm1002_1351.csv
 
 compute_environment:
